@@ -1,0 +1,76 @@
+# AI handoff policy — default profile
+# This file IS the governance artefact. It is versioned, peer-reviewed,
+# and owned by the team accountable for AI risk — not buried in feature code.
+#
+# Evaluation order: S3 -> S2 -> S1 (any_of), then S0 (all_of).
+# Most restrictive matching tier wins. No match = defer to user.
+
+version: default_v0.2
+
+risk_tiers:
+  S0:
+    description: "AI acts; user is informed via audit trail only."
+    conditions:
+      all_of:
+        model_confidence: ">= 0.85"
+        monetary_impact: "< 500"
+        reversibility: ["trivial"]
+        record_state: ["open"]
+    required_gates: [LOG_TO_AUDIT_TRAIL]
+
+  S1:
+    description: "AI suggests; user confirms with one click."
+    conditions:
+      any_of:
+        model_confidence: "0.65..0.85"
+        monetary_impact: "500..5000"
+        reversibility: ["moderate"]
+    required_gates: [SHOW_REASONING, LOG_TO_AUDIT_TRAIL]
+
+  S2:
+    description: "AI provides input; user must complete the action manually."
+    conditions:
+      any_of:
+        model_confidence: "< 0.65"
+        monetary_impact: ">= 5000"
+        reversibility: ["hard"]
+        record_state: ["locked"]
+    required_gates: [SHOW_REASONING, LOG_TO_AUDIT_TRAIL]
+
+  S3:
+    description: "AI cannot act; routed to a qualified human reviewer."
+    conditions:
+      any_of:
+        reversibility: ["irreversible"]
+        record_state: ["finalised"]
+        regulated_disclosure: true
+    required_gates: [NOTIFY_REVIEWER, SHOW_REASONING, LOG_TO_AUDIT_TRAIL]
+
+overrides:
+  # Per-surface floors. Escalation only — an override can never grant
+  # auto-execution that the base policy denies.
+  surfaces:
+    "assistant.outbound_send":
+      minimum_tier: S2          # anything leaving the org is never auto-actioned
+
+  # Per-role caps on monetary auto-execution.
+  user_roles:
+    standard:
+      cap_monetary_auto: 500
+    elevated:
+      cap_monetary_auto: 2000
+    reviewer:
+      cap_monetary_auto: 5000
+
+audit:
+  retention_years: 7
+  log_fields:
+    - surface
+    - model_confidence
+    - ai_suggestion
+    - monetary_impact
+    - reversibility
+    - record_state
+    - decision.route
+    - decision.reason
+    - decision.policy_version
