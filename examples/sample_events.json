@@ -1,0 +1,100 @@
+[
+  {
+    "action": {
+      "surface": "assistant.transaction_categorisation",
+      "suggestion": {"category": "Office Supplies", "tax_code": "GST"},
+      "model_confidence": 0.94,
+      "explanation": "Merchant pattern matches 47 prior categorisations in this org"
+    },
+    "context": {
+      "monetary_impact": 87.40,
+      "reversibility": "trivial",
+      "record_state": "open",
+      "user_role": "standard",
+      "org_id": "ORG_42a",
+      "user_id": "USR_9001"
+    }
+  },
+  {
+    "action": {
+      "surface": "assistant.reconciliation_match",
+      "suggestion": {"match_id": "BNK_5521", "invoice": "INV-2046"},
+      "model_confidence": 0.72,
+      "explanation": "Amount and date align; payee string distance 0.18"
+    },
+    "context": {
+      "monetary_impact": 1450.00,
+      "reversibility": "moderate",
+      "record_state": "open",
+      "user_role": "standard",
+      "org_id": "ORG_42a",
+      "user_id": "USR_9001"
+    }
+  },
+  {
+    "action": {
+      "surface": "assistant.anomaly_writeoff",
+      "suggestion": {"writeoff_amount": 12800.00, "reason_code": "DUPLICATE"},
+      "model_confidence": 0.91,
+      "explanation": "Duplicate supplier invoice detected across two periods"
+    },
+    "context": {
+      "monetary_impact": 12800.00,
+      "reversibility": "hard",
+      "record_state": "open",
+      "user_role": "elevated",
+      "org_id": "ORG_42a",
+      "user_id": "USR_7740"
+    }
+  },
+  {
+    "action": {
+      "surface": "assistant.tax_classification",
+      "suggestion": {"tax_code": "GST_FREE", "previous": "GST"},
+      "model_confidence": 0.88,
+      "explanation": "Supplier registered as GST-exempt from March"
+    },
+    "context": {
+      "monetary_impact": 320.00,
+      "reversibility": "moderate",
+      "record_state": "finalised",
+      "user_role": "reviewer",
+      "org_id": "ORG_42a",
+      "user_id": "USR_3310",
+      "extra": {"regulated_disclosure": true}
+    }
+  },
+  {
+    "action": {
+      "surface": "assistant.outbound_send",
+      "suggestion": {"template": "payment_reminder", "recipient": "client_221"},
+      "model_confidence": 0.97,
+      "explanation": "Invoice 14 days overdue; standard reminder cadence"
+    },
+    "context": {
+      "monetary_impact": 0.0,
+      "reversibility": "trivial",
+      "record_state": "open",
+      "user_role": "standard",
+      "org_id": "ORG_42a",
+      "user_id": "USR_9001"
+    }
+  },
+  {
+    "action": {
+      "surface": "assistant.transaction_categorisation",
+      "suggestion": {"category": "Travel", "tax_code": "GST"},
+      "model_confidence": 0.94,
+      "explanation": "High-value airfare; vendor seen once before"
+    },
+    "context": {
+      "monetary_impact": 480.00,
+      "reversibility": "trivial",
+      "record_state": "open",
+      "user_role": "standard",
+      "org_id": "ORG_42a",
+      "user_id": "USR_9001",
+      "extra": {"note": "within S0 thresholds but near the cap"}
+    }
+  }
+]
